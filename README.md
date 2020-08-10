@@ -8,15 +8,17 @@ network (intranet / in-home network).
 
 1. Download and install [Node.js](https://nodejs.org/en/)
 2. Clone ["Local Video Streaming" code](https://github.com/rihwan/local_video_streaming)
-3. Open shell (or command prompt) and go to cloned directory
-4. Install requirements by calling ```npm install```
+3. Open a terminal (Linux) or a command prompt (Windows)
+4. Go to the cloned directory
+5. Install requirements by calling ```npm install```
 
 ## Usage
 
-1. Open shell (or command prompt), and go to cloned directory
-2. Check your computer IP address (Linux: ifconfig / Windows: ipconfig command)
-3. Run server by ```npm start <<<your IP address>>> <<<your port>>> <<<your local video directory>>>```
-4. You can find your local videos by accessing ```http://<<<your IP address>>>:<<<your port>>>``` in any devices in your local network.
+1. Open a terminal (Linux) or command prompt (Windows)
+2. Go to the cloned directory
+3. Check your computer's IP address (Linux: ifconfig / Windows: ipconfig command)
+4. Run server by ```npm start <<<your IP address>>> <<<your port>>> <<<your local video directory>>>```
+5. You can find your local videos by accessing ```http://<<<your IP address>>>:<<<your port>>>``` in any devices in your local network.
 
 ## Supported Video File Formats
 
