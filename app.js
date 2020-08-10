@@ -25,12 +25,9 @@ var retrieveFiles = function(base_dir) {
             var curr_path = path.join(curr_dir, files[i]);
 
             var ext = curr_path.split('.').pop();
-            if (ext === 'mp4' || ext === 'mkv' || ext === 'mov') {
+            if (ext === 'mp4' || ext === 'mov' || ext === 'webm') {
                 var type = '';
                 if (ext === 'mp4' || ext === "mov") {
-                    type = 'video/mp4';
-                } else if (ext === 'mkv') {
-                    // type = 'video/matroska; codec="theora, vorbis"';
                     type = 'video/mp4';
                 } else if (ext === 'webm') {
                     type = 'video/webm; codecs="vp9.0, opus"';
