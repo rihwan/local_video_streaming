@@ -1,8 +1,8 @@
 # Local Video Streaming
 
 Local video streaming is a simple open-source video streaming server using
-Node.js / express. Video streaming in your local network (intranet / in-home
-network)
+Node.js / express. This server allows video streaming server in your local
+network (intranet / in-home network).
 
 ## Installation
 
