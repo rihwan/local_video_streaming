@@ -16,7 +16,7 @@ network (intranet / in-home network).
 
 1. Open a terminal (Linux) or command prompt (Windows)
 2. Go to the cloned directory
-3. Check your computer's IP address (Linux: ifconfig / Windows: ipconfig command)
+3. Check your computer's IP address (Linux: ifconfig / Windows: ipconfig command) and your own port (usually 3000).
 4. Run server by ```npm start <<<your IP address>>> <<<your port>>> <<<your local video directory>>>```
 5. You can find your local videos by accessing ```http://<<<your IP address>>>:<<<your port>>>``` in any devices in your local network.
 
