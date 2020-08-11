@@ -22,7 +22,8 @@ network (intranet / in-home network).
    - Choose your own port (e.g., 3000)
 4. Run server by
    - ```npm start <<<IP address>>> <<<port>>> <<<local video directory>>>```
-5. You can find your local videos by accessing ```http://<<<IP address>>>:<<<port>>>``` in any devices in your local network.
+5. Access your local streaming webpage in any devices in your local network
+   - ```http://<<<IP address>>>:<<<port>>>```
 
 ## Supported Video File Formats
 
