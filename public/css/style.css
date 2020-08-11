@@ -1,0 +1,57 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:700italic,400,300,700);
+
+video {
+	width: 100%;
+	max-width: 100%;
+	height: auto;
+}
+
+a:link {
+	color: #888;
+	text-decoration: none;
+}
+
+a:visited {
+	color: #888;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #000;
+	text-decoration: underline;
+}
+
+a:active {
+	color: #000;
+	text-decoration: none;
+}
+
+ul#ann {
+	list-style: none;
+	margin: 1em 0;
+	padding: 0;
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	font-size: 0.7em;
+}
+ul#ann li {
+	font-weight: bold;
+	margin: 10px 20px 0px 3px;
+	padding: 3px 3px 5px 3px;
+	border-bottom: 1px solid #ccc;
+	color: #666; 
+}
+ul#ann li:hover {
+	color: #000;
+	background-color: #ddd; 
+}
+
+#file_list {
+    overflow: auto;
+	float: left;
+	
+	padding-left: 10px;
+	padding-top: 10px;
+	
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	font-size: 0.8em;
+}
