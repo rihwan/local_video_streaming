@@ -49,6 +49,7 @@ var retrieveFiles = function(base_dir) {
                 }
 
                 total_file_list.push({
+                    'filename': files[i],
                     'video_filepath': video_filepath,
                     'image_filepath': image_filepath,
                     'image_file_exists': image_file_exists,
@@ -186,19 +187,19 @@ app.get('/', function (req, res, next) {
     content += '    <div id="file_list">\n';
     content += '      <ul id="ann">\n';
     for (var i = start_index; i < end_index; ++i) {
-        content += '      <li><a href="' + get_address();
+        content += '      <li>';
+        content += '<h3><a href="' + get_address();
         content += '/video_player/?index=' + i + '">';
-        content += i + ': ' + video_files[i].video_filepath;
         if (video_files[i].image_file_exists) {
-            content += '<br/><img src="' + get_address() + '/image/?index=' + i;
-            content += '" width="300" height="200" />';
+            content += '<img src="' + get_address() + '/image/?index=' + i;
+            content += '" width="300" height="200" /><br/>';
         }
-        content += '</a></li>\n';
+        content += i + ': ' + video_files[i].video_filepath;
+        content += '</a></h3></li>\n';
     }
     content += '        <li>' + add_page_numbers(page_index) + '</li>\n';
     content += '      </ul>\n';
-    content += '      <br/><br/>';
-    content += '      <br/><br/><br/><br/>'
+    content += '      <br/><br/><br/><br/><br/><br/>';
     content += '    </div>\n';
     content += '  </body>\n';
     content += '</html>\n';
