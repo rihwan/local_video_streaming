@@ -4,6 +4,7 @@ var app = express();
 var path = require('path');
 var fs = require('fs');
 var bodyParser = require('body-parser');
+var utils = require('./utils');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -82,95 +83,96 @@ const NUM_PAGES_TO_SHOW = 2;
 
 var video_files = retrieveFiles(video_dir);
 
-var get_address = function() {
-  var address = 'http://' + hostname + ':' + port;
-  return address;
-};
+//var get_address = function() {
+//  var address = 'http://' + hostname + ':' + port;
+//  return address;
+//};
 
-var check_local_ip_address = function(req) {
-  if (restrict_to_local_ip_address) {
-    var partial_ip = String(req.ip).substring(7);
-    if (String(req.ip).substring(7) !== '192.168') {
-      console.log('restricted IP: ' + partial_ip);
-      return false;
-    }
+//var check_local_ip_address = function(req) {
+//  if (restrict_to_local_ip_address) {
+//    var partial_ip = String(req.ip).substring(7);
+//    if (String(req.ip).substring(7) !== '192.168') {
+//      console.log('restricted IP: ' + partial_ip);
+//      return false;
+//    }
+//
+//    return true;
+//  } else {
+//    return true;
+//  }
+//};
 
-    return true;
-  } else {
-    return true;
-  }
-};
-
-var add_page_numbers = function(page_index) {
-  var max_pages = (video_files.length + NUM_FILES_PER_PAGE - 1);
-  max_pages /= NUM_FILES_PER_PAGE;
-  max_pages = Math.floor(max_pages);
-
-  var start_page_index = -1;
-  var end_page_index = -1;
-  if (page_index - NUM_PAGES_TO_SHOW < 0) {
-    start_page_index = 0;
-  } else {
-    start_page_index = page_index - NUM_PAGES_TO_SHOW;
-  }
-
-  end_page_index = start_page_index + NUM_PAGES_TO_SHOW * 2;
-  end_page_index = Math.floor(end_page_index);
-  if (page_index + NUM_PAGES_TO_SHOW >= max_pages) {
-    end_page_index = max_pages - 1;
-    start_page_index = max_pages - 1 - NUM_PAGES_TO_SHOW * 2;
-    start_page_index = Math.floor(start_page_index);
-    if (start_page_index < 0) {
-      start_page_index = 0;
-    }
-  }
-
-  var first_page = 0;
-  var last_page = max_pages - 1;
-
-  var content = '<center><h1>';
-  if (start_page_index > first_page) {
-    content += '<a href="' + get_address() + '/?page_index=' + first_page;
-    content += '">';
-    if (first_page == page_index) {
-      content += '<span style="color:red;">' + first_page + '</span>';
-    } else {
-      content += '<span style="color:blue;">' + first_page + '</span>';
-    }
-    content += '</a>';
-    content += '&nbsp;...&nbsp;';
-  }
-
-  for (var i = start_page_index; i <= end_page_index; ++i) {
-    content += '<a href="' + get_address() + '/?page_index=' + i + '">'
-    if (i == page_index) {
-      content += '<span style="color:red;">' + i + '</span>';
-    } else {
-      content += '<span style="color:blue;">' + i + '</span>';
-    }
-    content += '</a>';
-    content += '&nbsp;';
-  }
-
-  if (end_page_index < last_page) {
-    content += '...&nbsp;';
-    content += '<a href="' + get_address() + '/?page_index=' + last_page;
-    content += '">';
-    if (last_page == page_index) {
-      content += '<span style="color:red;">' + last_page + '</span>';
-    } else {
-      content += '<span style="color:blue;">' + last_page + '</span>';
-    }
-    content += '</a>';
-  }
-  content += '</h1></center>';
-
-  return content;
-};
+//var add_page_numbers = function(page_index) {
+//  var max_pages = (video_files.length + NUM_FILES_PER_PAGE - 1);
+//  max_pages /= NUM_FILES_PER_PAGE;
+//  max_pages = Math.floor(max_pages);
+//
+//  var start_page_index = -1;
+//  var end_page_index = -1;
+//  if (page_index - NUM_PAGES_TO_SHOW < 0) {
+//    start_page_index = 0;
+//  } else {
+//    start_page_index = page_index - NUM_PAGES_TO_SHOW;
+//  }
+//
+//  end_page_index = start_page_index + NUM_PAGES_TO_SHOW * 2;
+//  end_page_index = Math.floor(end_page_index);
+//  if (page_index + NUM_PAGES_TO_SHOW >= max_pages) {
+//    end_page_index = max_pages - 1;
+//    start_page_index = max_pages - 1 - NUM_PAGES_TO_SHOW * 2;
+//    start_page_index = Math.floor(start_page_index);
+//    if (start_page_index < 0) {
+//      start_page_index = 0;
+//    }
+//  }
+//
+//  var first_page = 0;
+//  var last_page = max_pages - 1;
+//  var server_address = utils.get_server_address();
+//
+//  var content = '<center><h1>';
+//  if (start_page_index > first_page) {
+//    content += '<a href="' + server_address + '/?page_index=';
+//    content += first_page + '">';
+//    if (first_page == page_index) {
+//      content += '<span style="color:red;">' + first_page + '</span>';
+//    } else {
+//      content += '<span style="color:blue;">' + first_page + '</span>';
+//    }
+//    content += '</a>';
+//    content += '&nbsp;...&nbsp;';
+//  }
+//
+//  for (var i = start_page_index; i <= end_page_index; ++i) {
+//    content += '<a href="' + server_address + '/?page_index=' + i + '">';
+//    if (i == page_index) {
+//      content += '<span style="color:red;">' + i + '</span>';
+//    } else {
+//      content += '<span style="color:blue;">' + i + '</span>';
+//    }
+//    content += '</a>';
+//    content += '&nbsp;';
+//  }
+//
+//  if (end_page_index < last_page) {
+//    content += '...&nbsp;';
+//    content += '<a href="' + server_address + '/?page_index=' + last_page;
+//    content += '">';
+//    if (last_page == page_index) {
+//      content += '<span style="color:red;">' + last_page + '</span>';
+//    } else {
+//      content += '<span style="color:blue;">' + last_page + '</span>';
+//    }
+//    content += '</a>';
+//  }
+//  content += '</h1></center>';
+//
+//  return content;
+//};
 
 // Index page shows title / video screenshots and pages.
 app.get('/', function (req, res, next) {
-  if (!check_local_ip_address(req)) {
+  if (!utils.check_local_ip_address(req)) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write('Access Restricted');
     res.end();
@@ -184,7 +186,7 @@ app.get('/', function (req, res, next) {
     content += '    <meta charset="UTF-8">\n';
     content += '    <title>' + APP_TITLE + '</title>\n';
     content += '    <link rel="stylesheet" type="text/css" href="';
-    content += get_address() + '/css/style.css" />\n';
+    content += utils.get_server_address() + '/css/style.css" />\n';
     content += '  </head>\n';
     content += '  <body>\n';
     content += '    <h2>No video files</h2>\n';
@@ -219,27 +221,29 @@ app.get('/', function (req, res, next) {
   content += '<html>\n';
   content += '  <head>\n';
   content += '    <meta charset="UTF-8">\n';
-  content += '    <title>Local Video Streaming</title>\n';
+  content += '    <title>' + APP_TITLE + '</title>\n';
   content += '    <link rel="stylesheet" type="text/css" href="';
-  content += get_address() + '/css/style.css" />\n';
+  content += utils.get_server_address() + '/css/style.css" />\n';
   content += '  </head>\n';
   content += '  <body>\n';
   content += '    <div id="file_list">\n';
   content += '      <ul id="ann">\n';
   for (var i = start_index; i < end_index; ++i) {
     content += '      <li>';
-    content += '<h3><a href="' + get_address();
+    content += '<h3><a href="' + utils.get_server_address();
     content += '/video_player/?index=' + i + '">';
     if (video_files[i].image_file_exists) {
-      content += '<img src="' + get_address() + '/image/?index=' + i;
-      content += '" width="300" height="200" /><br/>';
+      content += '<img src="' + utils.get_server_address() + '/image/?index=';
+      content += i + '" width="300" height="200" /><br/>';
     }
     content += i + ': ' + video_files[i].video_filepath;
     content += '</a></h3></li>\n';
   }
   content += '      </ul>\n';
   content += '      <ul id="page">\n';
-  content += '        <li>' + add_page_numbers(page_index) + '</li>\n';
+  content += '        <li>';
+  content += utils.get_page_numbers_content(video_files, page_index);
+  content += '</li>\n';
   content += '      </ul>\n';
   content += '      <br/><br/><br/><br/><br/><br/><br/>';
   content += '      <br/><br/><br/><br/><br/><br/><br/>';
@@ -255,7 +259,7 @@ app.get('/', function (req, res, next) {
 
 // Retrieving video player html page based on video index.
 app.get('/video_player', function (req, res, next) {
-  if (!check_local_ip_address(req)) {
+  if (!utils.check_local_ip_address(req)) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write('Access Restricted');
     res.end();
@@ -300,7 +304,7 @@ app.get('/video_player', function (req, res, next) {
 
 // Retrieving screenshot images based on index.
 app.get('/image', function (req, res, next) {
-  if (!check_local_ip_address(req)) {
+  if (!utils.check_local_ip_address(req)) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write('Access Restricted');
     res.end();
@@ -347,7 +351,7 @@ app.get('/image', function (req, res, next) {
 
 // Video streaming based on index.
 app.get('/video', function (req, res, next) {
-  if (!check_local_ip_address(req)) {
+  if (!utils.check_local_ip_address(req)) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write('Access Restricted');
     res.end();
