@@ -20,8 +20,10 @@ network (intranet / in-home network).
    - Find your computer's IP address using
      - ```ifconfig``` (Linux) or ```ipconfig``` (Windows)
    - Choose your own port (e.g., 3000)
+4. Create your own config.json file
+   - Copy config_template.json file, and change the content (server ip, port, local video directory, etc).
 4. Run server by
-   - ```npm start <<<IP address>>> <<<port>>> <<<local video directory>>>```
+   - ```npm start <<<Your config file>>>```
 5. Access your local streaming webpage in any devices in your local network
    - ```http://<<<IP address>>>:<<<port>>>```
 

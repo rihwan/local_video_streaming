@@ -3,3 +3,4 @@ package-lock.json
 run.bat
 run.sh
 .idea
+tmp

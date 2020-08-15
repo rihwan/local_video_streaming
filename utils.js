@@ -2,23 +2,19 @@
 var path = require('path');
 var fs = require('fs');
 
-let hostname = process.argv[2];
-let port = process.argv[3];
-let restrict_to_local_ip_address = process.argv[5];
-
-const NUM_FILES_PER_PAGE = 10;
-const NUM_PAGES_TO_SHOW = 2;
+let config_file = process.argv[2];
+const config = require(config_file);
 
 var get_server_address = function () {
-  var address = 'http://' + hostname + ':' + port;
+  var address = 'http://' + config.Server_IP + ':' + config.Server_Port;
   return address;
 };
 
 var retrieve_video_files = function (base_dir) {
   console.log('Search video files from ' + base_dir);
-  total_file_list = []
+  var total_file_list = [];
 
-  var dirs = []
+  var dirs = [];
   dirs.push(base_dir);
 
   while (dirs.length != 0) {
@@ -73,14 +69,13 @@ var retrieve_video_files = function (base_dir) {
   return total_file_list;
 };
 
-var check_local_ip_address = function (req) {
-  if (restrict_to_local_ip_address) {
-    var partial_ip = String(req.ip).substring(7);
-    if (String(req.ip).substring(7) !== '192.168') {
+var should_allow_access = function (req) {
+  if (config.Only_Allows_Local_Network_Access === true) {
+    var partial_ip = String(req.ip).substring(0, 7);
+    if (partial_ip !== '192.168') {
       console.log('Outside of local network tried to access: ' + partial_ip);
       return false;
     }
-
     return true;
   } else {
     return true;
@@ -90,25 +85,25 @@ var check_local_ip_address = function (req) {
 module.exports = {
   get_server_address: get_server_address,
   retrieve_video_files: retrieve_video_files,
-  check_local_ip_address: check_local_ip_address,
+  should_allow_access: should_allow_access,
   get_page_numbers_content: function (video_files, page_index) {
-    var max_pages = (video_files.length + NUM_FILES_PER_PAGE - 1);
-    max_pages /= NUM_FILES_PER_PAGE;
+    var max_pages = (video_files.length + config.Num_Files_Per_Page - 1);
+    max_pages /= config.Num_Files_Per_Page;
     max_pages = Math.floor(max_pages);
 
     var start_page_index = -1;
     var end_page_index = -1;
-    if (page_index - NUM_PAGES_TO_SHOW < 0) {
+    if (page_index - config.Num_Pages_To_Show < 0) {
       start_page_index = 0;
     } else {
-      start_page_index = page_index - NUM_PAGES_TO_SHOW;
+      start_page_index = page_index - config.Num_Pages_To_Show;
     }
 
-    end_page_index = start_page_index + NUM_PAGES_TO_SHOW * 2;
+    end_page_index = start_page_index + config.Num_Pages_To_Show * 2;
     end_page_index = Math.floor(end_page_index);
-    if (page_index + NUM_PAGES_TO_SHOW >= max_pages) {
+    if (page_index + config.Num_Pages_To_Show >= max_pages) {
       end_page_index = max_pages - 1;
-      start_page_index = max_pages - 1 - NUM_PAGES_TO_SHOW * 2;
+      start_page_index = max_pages - 1 - config.Num_Pages_To_Show * 2;
       start_page_index = Math.floor(start_page_index);
       if (start_page_index < 0) {
         start_page_index = 0;

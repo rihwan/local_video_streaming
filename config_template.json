@@ -1,0 +1,9 @@
+{
+  "App_Title": "Local Video Streaming",
+  "Server_IP": "<<<Your local server IP address>>>",
+  "Server_Port": "<<<Your port>>>",
+  "Only_Allows_Local_Network_Access": true,
+  "Local_Video_Directory": "<<<Indicate your local video directory>>>",
+  "Num_Files_Per_Page": 10,
+  "Num_Pages_To_Show": 2
+}

@@ -10,17 +10,16 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('public'));
 
-const APP_TITLE = 'Local Video Streaming';
-
-let video_dir = process.argv[4];
-const NUM_FILES_PER_PAGE = 10;
-var video_files = utils.retrieve_video_files(video_dir);
+let config_file = process.argv[2];
+console.log('Config File in app: ' + config_file);
+const config = require(config_file);
+var video_files = utils.retrieve_video_files(config.Local_Video_Directory);
 
 app.get('/favicon.ico', (req, res) => res.status(204));
 
 // Index page shows title / video screenshots and pages.
 app.get('/', function (req, res, next) {
-  if (!utils.check_local_ip_address(req)) {
+  if (!utils.should_allow_access(req)) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write('Access Restricted');
     res.end();
@@ -32,7 +31,7 @@ app.get('/', function (req, res, next) {
     content += '<html>\n';
     content += '  <head>\n';
     content += '    <meta charset="UTF-8">\n';
-    content += '    <title>' + APP_TITLE + '</title>\n';
+    content += '    <title>' + config.App_Title + '</title>\n';
     content += '    <link rel="stylesheet" type="text/css" href="';
     content += utils.get_server_address() + '/css/style.css" />\n';
     content += '  </head>\n';
@@ -46,8 +45,8 @@ app.get('/', function (req, res, next) {
     return;
   }
 
-  var max_pages = (video_files.length + NUM_FILES_PER_PAGE - 1);
-  max_pages /= NUM_FILES_PER_PAGE;
+  var max_pages = (video_files.length + config.Num_Files_Per_Page - 1);
+  max_pages /= config.Num_Files_Per_Page;
   max_pages = Math.floor(max_pages);
 
   var page_index = 0;
@@ -59,8 +58,8 @@ app.get('/', function (req, res, next) {
     page_index = max_pages - 1;
   }
 
-  var start_index = page_index * NUM_FILES_PER_PAGE;
-  var end_index = start_index + NUM_FILES_PER_PAGE;
+  var start_index = page_index * config.Num_Files_Per_Page;
+  var end_index = start_index + config.Num_Files_Per_Page;
   if (end_index > video_files.length) {
     end_index = video_files.length;
   }
@@ -69,7 +68,7 @@ app.get('/', function (req, res, next) {
   content += '<html>\n';
   content += '  <head>\n';
   content += '    <meta charset="UTF-8">\n';
-  content += '    <title>' + APP_TITLE + '</title>\n';
+  content += '    <title>' + config.App_Title + '</title>\n';
   content += '    <link rel="stylesheet" type="text/css" href="';
   content += utils.get_server_address() + '/css/style.css" />\n';
   content += '  </head>\n';
@@ -107,7 +106,7 @@ app.get('/', function (req, res, next) {
 
 // Retrieving video player html page based on video index.
 app.get('/video_player', function (req, res, next) {
-  if (!utils.check_local_ip_address(req)) {
+  if (!utils.should_allow_access(req)) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write('Access Restricted');
     res.end();
@@ -153,7 +152,7 @@ app.get('/video_player', function (req, res, next) {
 
 // Retrieving screenshot images based on index.
 app.get('/image', function (req, res, next) {
-  if (!utils.check_local_ip_address(req)) {
+  if (!utils.should_allow_access(req)) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write('Access Restricted');
     res.end();
@@ -167,7 +166,8 @@ app.get('/image', function (req, res, next) {
 
   if (index >= 0 && index < video_files.length &&
     video_files[index].image_file_exists) {
-    const filepath = path.join(video_dir, video_files[index].image_filepath);
+    const filepath = path.join(config.Local_Video_Directory,
+                               video_files[index].image_filepath);
     var s = fs.createReadStream(filepath);
 
     s.on('open', function () {
@@ -199,7 +199,7 @@ app.get('/image', function (req, res, next) {
 
 // Video streaming based on index.
 app.get('/video', function (req, res, next) {
-  if (!utils.check_local_ip_address(req)) {
+  if (!utils.should_allow_access(req)) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write('Access Restricted');
     res.end();
@@ -212,7 +212,8 @@ app.get('/video', function (req, res, next) {
   }
 
   if (index >= 0 && index < video_files.length) {
-    const filepath = path.join(video_dir, video_files[index].video_filepath);
+    const filepath = path.join(config.Local_Video_Directory,
+                               video_files[index].video_filepath);
 
     const stat = fs.statSync(filepath);
     const fileSize = stat.size;
