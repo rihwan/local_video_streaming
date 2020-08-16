@@ -70,6 +70,11 @@ var retrieve_video_files = function (base_dir) {
 };
 
 var should_allow_access = function (req) {
+  if (!req || !req.ip) {
+    console.log('Requested IP address does not exist.');
+    return false;
+  }
+
   if (config.Only_Allows_Local_Network_Access === true) {
     var partial_ip = String(req.ip).substring(0, 7);
     if (partial_ip !== '192.168') {
@@ -82,75 +87,77 @@ var should_allow_access = function (req) {
   }
 }
 
+var get_page_numbers_content = function (video_files, page_index) {
+  var max_pages = (video_files.length + config.Num_Files_Per_Page - 1);
+  max_pages /= config.Num_Files_Per_Page;
+  max_pages = Math.floor(max_pages);
+
+  var start_page_index = -1;
+  var end_page_index = -1;
+  if (page_index - config.Num_Pages_To_Show < 0) {
+    start_page_index = 0;
+  } else {
+    start_page_index = page_index - config.Num_Pages_To_Show;
+  }
+
+  end_page_index = start_page_index + config.Num_Pages_To_Show * 2;
+  end_page_index = Math.floor(end_page_index);
+  if (page_index + config.Num_Pages_To_Show >= max_pages) {
+    end_page_index = max_pages - 1;
+    start_page_index = max_pages - 1 - config.Num_Pages_To_Show * 2;
+    start_page_index = Math.floor(start_page_index);
+    if (start_page_index < 0) {
+      start_page_index = 0;
+    }
+  }
+
+  var first_page = 0;
+  var last_page = max_pages - 1;
+
+  var content = '<center><h1>';
+  if (start_page_index > first_page) {
+    content += '<a href="' + get_server_address() + '/?page_index=';
+    content += first_page; + '">';
+    if (first_page == page_index) {
+      content += '<span style="color:red;">' + first_page + '</span>';
+    } else {
+      content += '<span style="color:blue;">' + first_page + '</span>';
+    }
+    content += '</a>';
+    content += '&nbsp;...&nbsp;';
+  }
+
+  for (var i = start_page_index; i <= end_page_index; ++i) {
+    content += '<a href="' + get_server_address() + '/?page_index=' + i;
+    content += '">';
+    if (i == page_index) {
+      content += '<span style="color:red;">' + i + '</span>';
+    } else {
+      content += '<span style="color:blue;">' + i + '</span>';
+    }
+    content += '</a>';
+    content += '&nbsp;';
+  }
+
+  if (end_page_index < last_page) {
+    content += '...&nbsp;';
+    content += '<a href="' + get_server_address() + '/?page_index=';
+    content += last_page + '">';
+    if (last_page == page_index) {
+      content += '<span style="color:red;">' + last_page + '</span>';
+    } else {
+      content += '<span style="color:blue;">' + last_page + '</span>';
+    }
+    content += '</a>';
+  }
+  content += '</h1></center>';
+
+  return content;
+};
+
 module.exports = {
   get_server_address: get_server_address,
   retrieve_video_files: retrieve_video_files,
   should_allow_access: should_allow_access,
-  get_page_numbers_content: function (video_files, page_index) {
-    var max_pages = (video_files.length + config.Num_Files_Per_Page - 1);
-    max_pages /= config.Num_Files_Per_Page;
-    max_pages = Math.floor(max_pages);
-
-    var start_page_index = -1;
-    var end_page_index = -1;
-    if (page_index - config.Num_Pages_To_Show < 0) {
-      start_page_index = 0;
-    } else {
-      start_page_index = page_index - config.Num_Pages_To_Show;
-    }
-
-    end_page_index = start_page_index + config.Num_Pages_To_Show * 2;
-    end_page_index = Math.floor(end_page_index);
-    if (page_index + config.Num_Pages_To_Show >= max_pages) {
-      end_page_index = max_pages - 1;
-      start_page_index = max_pages - 1 - config.Num_Pages_To_Show * 2;
-      start_page_index = Math.floor(start_page_index);
-      if (start_page_index < 0) {
-        start_page_index = 0;
-      }
-    }
-
-    var first_page = 0;
-    var last_page = max_pages - 1;
-
-    var content = '<center><h1>';
-    if (start_page_index > first_page) {
-      content += '<a href="' + get_server_address() + '/?page_index=';
-      content += first_page; + '">';
-      if (first_page == page_index) {
-        content += '<span style="color:red;">' + first_page + '</span>';
-      } else {
-        content += '<span style="color:blue;">' + first_page + '</span>';
-      }
-      content += '</a>';
-      content += '&nbsp;...&nbsp;';
-    }
-
-    for (var i = start_page_index; i <= end_page_index; ++i) {
-      content += '<a href="' + get_server_address() + '/?page_index=' + i;
-      content += '">';
-      if (i == page_index) {
-        content += '<span style="color:red;">' + i + '</span>';
-      } else {
-        content += '<span style="color:blue;">' + i + '</span>';
-      }
-      content += '</a>';
-      content += '&nbsp;';
-    }
-
-    if (end_page_index < last_page) {
-      content += '...&nbsp;';
-      content += '<a href="' + get_server_address() + '/?page_index=';
-      content += last_page + '">';
-      if (last_page == page_index) {
-        content += '<span style="color:red;">' + last_page + '</span>';
-      } else {
-        content += '<span style="color:blue;">' + last_page + '</span>';
-      }
-      content += '</a>';
-    }
-    content += '</h1></center>';
-
-    return content;
-  }
+  get_page_numbers_content: get_page_numbers_content
 };
