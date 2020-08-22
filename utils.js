@@ -124,7 +124,7 @@ var get_page_numbers_content = function (video_files, page_index) {
       content += '<span style="color:blue;">' + first_page + '</span>';
     }
     content += '</a>';
-    content += '&nbsp;...&nbsp;';
+    content += '&nbsp;...&nbsp;&nbsp;';
   }
 
   for (var i = start_page_index; i <= end_page_index; ++i) {
@@ -136,11 +136,11 @@ var get_page_numbers_content = function (video_files, page_index) {
       content += '<span style="color:blue;">' + i + '</span>';
     }
     content += '</a>';
-    content += '&nbsp;';
+    content += '&nbsp;&nbsp;';
   }
 
   if (end_page_index < last_page) {
-    content += '...&nbsp;';
+    content += '...&nbsp;&nbsp;';
     content += '<a href="' + get_server_address() + '/?page_index=';
     content += last_page + '">';
     if (last_page == page_index) {

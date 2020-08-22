@@ -62,7 +62,7 @@ ul#page li {
 
 #file_list {
     overflow: auto;
-	float: left;
+	float: center;
 	
 	padding-left: 10px;
 	padding-top: 10px;

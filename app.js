@@ -76,21 +76,21 @@ app.get('/', function (req, res, next) {
   content += '    <div id="file_list">\n';
   content += '      <ul id="ann">\n';
   for (var i = start_index; i < end_index; ++i) {
-    content += '      <li>';
+    content += '      <li><center>';
     content += '<h3><a href="' + utils.get_server_address();
     content += '/video_player/?index=' + i + '">';
     if (video_files[i].image_file_exists) {
       content += '<img src="' + utils.get_server_address() + '/image/?index=';
-      content += i + '" width="300" height="200" /><br/>';
+      content += i + '" width="640" height="480" /><br/>';
     }
     content += i + ': ' + video_files[i].video_filepath;
-    content += '</a></h3></li>\n';
+    content += '</a></h3></center></li>\n';
   }
   content += '      </ul>\n';
   content += '      <ul id="page">\n';
-  content += '        <li>';
+  content += '        <li><center>';
   content += utils.get_page_numbers_content(video_files, page_index);
-  content += '</li>\n';
+  content += '</center></li>\n';
   content += '      </ul>\n';
   content += '      <br/><br/><br/><br/><br/><br/><br/>';
   content += '      <br/><br/><br/><br/><br/><br/><br/>';
