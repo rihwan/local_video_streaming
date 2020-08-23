@@ -7,8 +7,11 @@ var app = require('../app');
 var path = require('path');
 var http = require('http');
 
-let config_file = process.argv[2];
-const config = require(path.join(__dirname, '../', config_file));
+var config_file = process.argv[2];
+if (!path.isAbsolute(config_file)) {
+  config_file = path.join('../', config_file);
+}
+config = require(config_file);
 
 /**
  * Get port from environment and store in Express.
