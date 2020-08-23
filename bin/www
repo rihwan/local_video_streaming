@@ -3,11 +3,13 @@
 /**
  * Module dependencies.
 **/
-var app = require('./app');
+var app = require('../app');
+var path = require('path');
 var http = require('http');
 
+console.log('www __dirname:' + __dirname);
 let config_file = process.argv[2];
-const config = require(config_file);
+const config = require(path.join(__dirname, '../', config_file));
 
 /**
  * Get port from environment and store in Express.

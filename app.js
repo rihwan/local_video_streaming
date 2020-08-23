@@ -17,9 +17,6 @@ var video_files = utils.retrieve_video_files(config.Local_Video_Directory);
 
 const video_page_file = path.join(__dirname, 'views/video_page_template.html');
 const video_webpage_template = utils.read_page_template(video_page_file);
-const no_video_page_file = path.join(
-  __dirname, 'views/no_video_page_template.html');
-const no_video_webpage = utils.read_page_template(no_video_page_file);
 
 app.get('/favicon.ico', (req, res) => res.status(204));
 
@@ -28,13 +25,6 @@ app.get('/', function (req, res, next) {
   if (!utils.should_allow_access(req)) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write('Access Restricted');
-    res.end();
-    return;
-  }
-
-  if (video_files.length === 0) {
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write(no_video_webpage);
     res.end();
     return;
   }
@@ -120,7 +110,7 @@ app.get('/video_player', function (req, res, next) {
   }
 
   if (index >= 0 && index < video_files.length) {
-    var content = '';
+    var content = '<!DOCTYPE html>\n';
     content += '<html>\n';
     content += '  <head>\n';
     content += '    <meta charset="UTF-8">\n';

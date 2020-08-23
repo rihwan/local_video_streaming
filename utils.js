@@ -11,6 +11,9 @@ var get_num_pages = function (video_files) {
   var max_pages = (video_files.length + NUM_FILES_PER_PAGE - 1);
   max_pages /= NUM_FILES_PER_PAGE;
   max_pages = Math.floor(max_pages);
+  if (max_pages === 0) {
+    max_pages = 1;
+  }
   return max_pages;
 };
 
