@@ -36,7 +36,7 @@ var replace_all = function(str, search, replacement) {
 var read_page_template = function (file_path) {
   var content = fs.readFileSync(file_path, 'utf-8');
   content = replace_all(content, "```Title```", config.App_Title);
-  var server_url = get_server_address() + "/";
+  var server_url = get_server_address();
   content = replace_all(content, "```ServerUrl```", server_url);
   content = replace_all(content, "```VideoDefault_Url```", server_url);
   return content;

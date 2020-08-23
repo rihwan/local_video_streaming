@@ -127,7 +127,7 @@ app.get('/video_player', function (req, res, next) {
     content += '    <title>' + video_files[index].video_filepath;
     content += '</title>\n';
     content += '    <link rel="stylesheet" type="text/css" href="';
-    content += utils.get_server_address() + '/css/style.css" />\n';
+    content += utils.get_server_address() + '/css/video_style.css" />\n';
     content += '  </head>\n';
     content += '  <body>\n';
     content += '    <center>\n';
