@@ -2,12 +2,44 @@
 var path = require('path');
 var fs = require('fs');
 
+const NUM_FILES_PER_PAGE = 9;
+
 let config_file = process.argv[2];
 const config = require(config_file);
+
+var get_num_pages = function (video_files) {
+  var max_pages = (video_files.length + NUM_FILES_PER_PAGE - 1);
+  max_pages /= NUM_FILES_PER_PAGE;
+  max_pages = Math.floor(max_pages);
+  return max_pages;
+};
+
+var get_num_files_per_page = function () {
+  return NUM_FILES_PER_PAGE;
+};
 
 var get_server_address = function () {
   var address = 'http://' + config.Server_IP + ':' + config.Server_Port;
   return address;
+};
+
+var write_404_page = function (res) {
+  res.writeHead(404, {'Content-Type': 'text/html'});
+  res.write('Not found');
+  res.end();
+};
+
+var replace_all = function(str, search, replacement) {
+  return str.split(search).join(replacement);
+};
+
+var read_page_template = function (file_path) {
+  var content = fs.readFileSync(file_path, 'utf-8');
+  content = replace_all(content, "```Title```", config.App_Title);
+  var server_url = get_server_address() + "/";
+  content = replace_all(content, "```ServerUrl```", server_url);
+  content = replace_all(content, "```VideoDefault_Url```", server_url);
+  return content;
 };
 
 var retrieve_video_files = function (base_dir) {
@@ -87,10 +119,30 @@ var should_allow_access = function (req) {
   }
 }
 
+var add_page_number_content = function (
+  server_addr_page, page_index, active_page_index, text) {
+  var content = '';
+
+  if (page_index == active_page_index) {
+    content += '<li class="uk-active"><a href="';
+  } else {
+    content += '<li><a href="';
+  }
+
+  content += server_addr_page + page_index + '">';
+
+  if (text === undefined) {
+    content += page_index;
+  } else {
+    content += text;
+  }
+
+  content += '</a></li>\n';
+  return content;
+}
+
 var get_page_numbers_content = function (video_files, page_index) {
-  var max_pages = (video_files.length + config.Num_Files_Per_Page - 1);
-  max_pages /= config.Num_Files_Per_Page;
-  max_pages = Math.floor(max_pages);
+  var num_pages = get_num_pages(video_files);
 
   var start_page_index = -1;
   var end_page_index = -1;
@@ -102,55 +154,43 @@ var get_page_numbers_content = function (video_files, page_index) {
 
   end_page_index = start_page_index + config.Num_Pages_To_Show * 2;
   end_page_index = Math.floor(end_page_index);
-  if (page_index + config.Num_Pages_To_Show >= max_pages) {
-    end_page_index = max_pages - 1;
-    start_page_index = max_pages - 1 - config.Num_Pages_To_Show * 2;
+  if (page_index + config.Num_Pages_To_Show >= num_pages) {
+    end_page_index = num_pages - 1;
+    start_page_index = num_pages - 1 - config.Num_Pages_To_Show * 2;
     start_page_index = Math.floor(start_page_index);
     if (start_page_index < 0) {
       start_page_index = 0;
     }
   }
 
-  var first_page = 0;
-  var last_page = max_pages - 1;
+  var server_addr_page = get_server_address() + '/?page_index=';
 
-  var content = '<center><h1>';
+  var first_page = 0;
+  var last_page = num_pages - 1;
+
+  var content = '';
   if (start_page_index > first_page) {
-    content += '<a href="' + get_server_address() + '/?page_index=';
-    content += first_page; + '">';
-    if (first_page == page_index) {
-      content += '<span style="color:red;">' + first_page + '</span>';
-    } else {
-      content += '<span style="color:blue;">' + first_page + '</span>';
+    content += add_page_number_content(
+      server_addr_page, first_page, page_index);
+    if (first_page + 1 < start_page_index) {
+      var middle_page = Math.floor((first_page + start_page_index + 1) / 2);
+      content += add_page_number_content(
+        server_addr_page, middle_page, page_index, '...');
     }
-    content += '</a>';
-    content += '&nbsp;...&nbsp;&nbsp;';
   }
 
   for (var i = start_page_index; i <= end_page_index; ++i) {
-    content += '<a href="' + get_server_address() + '/?page_index=' + i;
-    content += '">';
-    if (i == page_index) {
-      content += '<span style="color:red;">' + i + '</span>';
-    } else {
-      content += '<span style="color:blue;">' + i + '</span>';
-    }
-    content += '</a>';
-    content += '&nbsp;&nbsp;';
+    content += add_page_number_content(server_addr_page, i, page_index);
   }
 
   if (end_page_index < last_page) {
-    content += '...&nbsp;&nbsp;';
-    content += '<a href="' + get_server_address() + '/?page_index=';
-    content += last_page + '">';
-    if (last_page == page_index) {
-      content += '<span style="color:red;">' + last_page + '</span>';
-    } else {
-      content += '<span style="color:blue;">' + last_page + '</span>';
+    if (end_page_index + 1 < last_page) {
+      var middle_page = Math.floor((end_page_index + last_page + 1) / 2);
+      content += add_page_number_content(
+        server_addr_page, middle_page, page_index, '...');
     }
-    content += '</a>';
+    content += add_page_number_content(server_addr_page, last_page, page_index);
   }
-  content += '</h1></center>';
 
   return content;
 };
@@ -159,5 +199,10 @@ module.exports = {
   get_server_address: get_server_address,
   retrieve_video_files: retrieve_video_files,
   should_allow_access: should_allow_access,
-  get_page_numbers_content: get_page_numbers_content
+  get_page_numbers_content: get_page_numbers_content,
+  read_page_template: read_page_template,
+  get_num_pages: get_num_pages,
+  get_num_files_per_page: get_num_files_per_page,
+  replace_all: replace_all,
+  write_404_page: write_404_page
 };

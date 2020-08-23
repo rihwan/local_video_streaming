@@ -15,6 +15,12 @@ console.log('Config File in app: ' + config_file);
 const config = require(config_file);
 var video_files = utils.retrieve_video_files(config.Local_Video_Directory);
 
+const video_page_file = path.join(__dirname, 'views/video_page_template.html');
+const video_webpage_template = utils.read_page_template(video_page_file);
+const no_video_page_file = path.join(
+  __dirname, 'views/no_video_page_template.html');
+const no_video_webpage = utils.read_page_template(no_video_page_file);
+
 app.get('/favicon.ico', (req, res) => res.status(204));
 
 // Index page shows title / video screenshots and pages.
@@ -27,77 +33,72 @@ app.get('/', function (req, res, next) {
   }
 
   if (video_files.length === 0) {
-    var content = '';
-    content += '<html>\n';
-    content += '  <head>\n';
-    content += '    <meta charset="UTF-8">\n';
-    content += '    <title>' + config.App_Title + '</title>\n';
-    content += '    <link rel="stylesheet" type="text/css" href="';
-    content += utils.get_server_address() + '/css/style.css" />\n';
-    content += '  </head>\n';
-    content += '  <body>\n';
-    content += '    <h2>No video files</h2>\n';
-    content += '  </body>\n';
-    content += '</html>\n';
     res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write(content);
+    res.write(no_video_webpage);
     res.end();
     return;
   }
 
-  var max_pages = (video_files.length + config.Num_Files_Per_Page - 1);
-  max_pages /= config.Num_Files_Per_Page;
-  max_pages = Math.floor(max_pages);
+  var num_files_per_page = utils.get_num_files_per_page();
+  var num_pages = utils.get_num_pages(video_files);
 
   var page_index = 0;
   if (req.query && req.query.page_index) {
     page_index = parseInt(req.query.page_index);
   }
 
-  if (page_index >= max_pages) {
-    page_index = max_pages - 1;
+  if (page_index >= num_pages) {
+    page_index = num_pages - 1;
   }
 
-  var start_index = page_index * config.Num_Files_Per_Page;
-  var end_index = start_index + config.Num_Files_Per_Page;
+  var start_index = page_index * num_files_per_page;
+  var end_index = start_index + num_files_per_page;
   if (end_index > video_files.length) {
     end_index = video_files.length;
   }
 
-  var content = '';
-  content += '<html>\n';
-  content += '  <head>\n';
-  content += '    <meta charset="UTF-8">\n';
-  content += '    <title>' + config.App_Title + '</title>\n';
-  content += '    <link rel="stylesheet" type="text/css" href="';
-  content += utils.get_server_address() + '/css/style.css" />\n';
-  content += '  </head>\n';
-  content += '  <body>\n';
-  content += '    <div id="file_list">\n';
-  content += '      <ul id="ann">\n';
+  // Copy video webpage template.
+  var content = video_webpage_template;
+  var page_contents = utils.get_page_numbers_content(video_files, page_index);
+  content = utils.replace_all(content, "```Pages```", page_contents);
+
   for (var i = start_index; i < end_index; ++i) {
-    content += '      <li><center>';
-    content += '<h3><a href="' + utils.get_server_address();
-    content += '/video_player/?index=' + i + '">';
-    if (video_files[i].image_file_exists) {
-      content += '<img src="' + utils.get_server_address() + '/image/?index=';
-      content += i + '" width="640" height="480" /><br/>';
-    }
-    content += i + ': ' + video_files[i].video_filepath;
-    content += '</a></h3></center></li>\n';
+    var index = i - start_index;
+    var image_url_search = "```Image" + index + "_Url```";
+    var video_url_search = "```Video" + index + "_Url```";
+    var video_caption_search = "```Video" + index + "_Caption```";
+
+    var target_image_url = utils.get_server_address();
+    target_image_url += '/image/?index=' + i;
+    var target_video_url = utils.get_server_address();
+    target_video_url += '/video_player/?index=' + i;
+
+    content = utils.replace_all(content, image_url_search, target_image_url);
+    content = utils.replace_all(content, video_url_search, target_video_url);
+    content = utils.replace_all(content, video_caption_search,
+      video_files[i].filename);
   }
-  content += '      </ul>\n';
-  content += '      <ul id="page">\n';
-  content += '        <li><center>';
-  content += utils.get_page_numbers_content(video_files, page_index);
-  content += '</center></li>\n';
-  content += '      </ul>\n';
-  content += '      <br/><br/><br/><br/><br/><br/><br/>';
-  content += '      <br/><br/><br/><br/><br/><br/><br/>';
-  content += '      <br/><br/><br/><br/><br/><br/><br/>';
-  content += '    </div>\n';
-  content += '  </body>\n';
-  content += '</html>\n';
+
+  var num_files_per_page = utils.get_num_files_per_page();
+  if (end_index - start_index < num_files_per_page) {
+    var relative_start = end_index - start_index;
+    for (var rel_i = relative_start; rel_i < num_files_per_page; ++rel_i) {
+      var i = start_index + rel_i;
+      var index = i - start_index;
+      var image_url_search = "```Image" + index + "_Url```";
+      var video_url_search = "```Video" + index + "_Url```";
+      var video_caption_search = "```Video" + index + "_Caption```";
+
+      var target_image_url = utils.get_server_address();
+      target_image_url += '/image/?index=' + i;
+      var target_video_url = utils.get_server_address();
+      target_video_url += '/video_player/?index=' + i;
+
+      content = utils.replace_all(content, image_url_search, target_image_url);
+      content = utils.replace_all(content, video_url_search, '#');
+      content = utils.replace_all(content, video_caption_search, 'No video');
+    }
+  }
 
   res.writeHead(200, {'Content-Type': 'text/html'});
   res.write(content);
@@ -144,9 +145,7 @@ app.get('/video_player', function (req, res, next) {
     res.write(content);
     res.end();
   } else {
-    res.writeHead(404, {'Content-Type': 'text/html'});
-    res.write('Not found');
-    res.end();
+    return utils.write_404_page(res);
   }
 });
 
@@ -176,13 +175,11 @@ app.get('/image', function (req, res, next) {
     });
 
     s.on('error', function () {
-      res.setHeader('Content-Type', 'text/plain');
-      res.statusCode = 404;
-      res.end('Not found');
+      return utils.write_404_page(res);
     });
   } else {
-    var empty_jpeg = path.join(__dirname, 'public/empty_jpeg.jpg');
-    var s = fs.createReadStream(empty_jpeg);
+    var no_image_jpeg = path.join(__dirname, 'public/images/no_image.jpg');
+    var s = fs.createReadStream(no_image_jpeg);
 
     s.on('open', function () {
       res.setHeader('Content-Type', 'image/jpeg');
@@ -190,9 +187,7 @@ app.get('/image', function (req, res, next) {
     });
 
     s.on('error', function () {
-      res.setHeader('Content-Type', 'text/plain');
-      res.statusCode = 404;
-      res.end('Not found');
+      return utils.write_404_page(res);
     });
   }
 });
@@ -244,9 +239,7 @@ app.get('/video', function (req, res, next) {
       fs.createReadStream(filepath).pipe(res);
     }
   } else {
-      res.writeHead(404, {'Content-Type': 'text/html'});
-      res.write('Not found');
-      res.end();
+      return utils.write_404_page(res);
   }
 });
 
