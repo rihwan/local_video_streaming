@@ -9,7 +9,7 @@ const config = require(config_file);
 
 var get_num_pages = function (video_files) {
   var max_pages = (video_files.length + NUM_FILES_PER_PAGE - 1);
-  max_pages /= NUM_FILES_PER_PAGE;
+  max_pages = max_pages / NUM_FILES_PER_PAGE;
   max_pages = Math.floor(max_pages);
   if (max_pages === 0) {
     max_pages = 1;
@@ -165,6 +165,8 @@ var get_page_numbers_content = function (video_files, page_index) {
       start_page_index = 0;
     }
   }
+
+  console.log('Page range: ' + start_page_index + ':' + end_page_index);
 
   var server_addr_page = get_server_address() + '/?page_index=';
 
