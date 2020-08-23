@@ -35,3 +35,6 @@ network (intranet / in-home network).
 
 ## License
 [MIT](https://github.com/rihwan/local_video_streaming/blob/master/LICENSE)
+
+This project is free of charge, use, copy, merge, publish and distribute without
+any limitations.
