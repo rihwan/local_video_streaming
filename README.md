@@ -27,6 +27,17 @@ local network (intranet / in-home network).
 5. Access your local streaming webpage in any devices in your local network
    - ```http://<<<IP address>>>:<<<port>>>```
 
+## How to create screenshots
+
+1. Install ffmpeg (ffmpeg should be added in PATH)
+2. Open a terminal (Linux) or command prompt (Windows)
+3. Go to the script directory under the cloned directory
+   - ```cd tools/windows``` (Windows) or ```cd tools/linux``` (Linux)
+4. Run the recursive screen capture script
+   - ```recursively_capture_screenshot.bat <<<local video directory>>>``` (Windows)
+   - (WIP) ```sh recursively_capture_screenshot.sh <<<local video directory>>>``` (Linux)
+   - This will take some time depending on the number of videos in the given directory.
+
 ## Supported Video File Formats
 
 1. MP4
