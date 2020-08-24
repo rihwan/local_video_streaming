@@ -35,7 +35,7 @@ local network (intranet / in-home network).
    - ```cd tools/windows``` (Windows) or ```cd tools/linux``` (Linux)
 4. Run the recursive screen capture script
    - ```recursively_capture_screenshot.bat <<<local video directory>>>``` (Windows)
-   - (WIP) ```sh recursively_capture_screenshot.sh <<<local video directory>>>``` (Linux)
+   - ```sh recursively_capture_screenshot.sh <<<local video directory>>>``` (Linux)
    - This will take some time depending on the number of videos in the given directory.
 
 ## Supported Video File Formats
