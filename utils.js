@@ -166,8 +166,6 @@ var get_page_numbers_content = function (video_files, page_index) {
     }
   }
 
-  console.log('Page range: ' + start_page_index + ':' + end_page_index);
-
   var server_addr_page = get_server_address() + '/?page_index=';
 
   var first_page = 0;
