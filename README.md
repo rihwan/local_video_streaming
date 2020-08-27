@@ -29,13 +29,12 @@ local network (intranet / in-home network).
 
 ## How to create screenshots
 
+0. Python3 is needed as a pre-requisite.
 1. Install ffmpeg (ffmpeg should be added in PATH)
 2. Open a terminal (Linux) or command prompt (Windows)
-3. Go to the script directory under the cloned directory
-   - ```cd tools/windows``` (Windows) or ```cd tools/linux``` (Linux)
+3. Go to ```tools``` directory under the cloned directory
 4. Run the recursive screen capture script
-   - ```recursively_capture_screenshot.bat <<<local video directory>>>``` (Windows)
-   - ```sh recursively_capture_screenshot.sh <<<local video directory>>>``` (Linux)
+   - ```python recursively_capture_screenshot.py <<<local video directory>>>```
    - This will take some time depending on the number of videos in the given directory.
 
 ## Supported Video File Formats
