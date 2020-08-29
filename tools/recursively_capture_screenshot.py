@@ -25,6 +25,12 @@ if __name__ == '__main__':
     if os.path.isfile(filepath):
       _, ext = os.path.splitext(filepath)
       if ext == '.mp4' or ext == '.mov':
+        base_dir, filename = os.path.split(filepath)
+        screenshot_dir = os.path.join(base_dir, 'screenshots')
+        target_image_file = os.path.join(screenshot_dir, filename) + '.jpg'
+        if os.path.exists(target_image_file):
+          continue
+
         out = subprocess.Popen(
           ['ffprobe', '-v', 'error', '-show_entries', 'format=duration',
            '-of', 'default=noprint_wrappers=1:nokey=1',
@@ -36,14 +42,10 @@ if __name__ == '__main__':
         half_time_str = get_time_string(video_length / 2.0)
         print('Processing: ' + filepath + ' in time: ' + half_time_str)
 
-        base_dir, filename = os.path.split(filepath)
-
-        screenshot_dir = os.path.join(base_dir, 'screenshots')
         if not os.path.exists(screenshot_dir):
           print('Make Dir: ' + screenshot_dir)
           os.makedirs(screenshot_dir)
-
-        target_image_file = os.path.join(screenshot_dir, filename) + '.jpg'
+        
         print(target_image_file)
         out = subprocess.Popen(
           ['ffmpeg', '-y', '-hide_banner', '-loglevel', 'error', '-ss',
